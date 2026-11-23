@@ -1,0 +1,13 @@
+# Site overrides of the theme's config/theme.yaml (deep-merged, arrays replaced).
+extra_css: ['/_nera/code-blocks.css']
+footer_links:
+    - label: Imprint
+      href: { en: /imprint.html, de: /de/impressum.html }
+    - label: Privacy
+      href: { en: /privacy.html, de: /de/datenschutz.html }
+blog:
+    featured_series: RAG from scratch in Laravel
+author:
+    name: Jonas Brandt
+    bio: Backend developer in Leipzig. Ten years of Laravel, two of putting language models into products people pay for. I write down what broke so you can skip it.
+    href: { en: /about.html, de: /de/ueber-mich.html }
