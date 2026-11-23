@@ -1,0 +1,14 @@
+//- The featured series on the home (Revision R3, `blog.featured_series`):
+//- label t('Series'), the name, a link t('Read more') to part one, and the
+//- parts as a numbered list. Not rendered when the series has no part in the
+//- page's language.
+if themeStack.seriesParts(themeStack.featuredSeries(), pageLang({ meta })).length
+    section.home-series
+        div
+            p= t('Series')
+            h2= themeStack.featuredSeries()
+            a.button(href=themeStack.seriesParts(themeStack.featuredSeries(), pageLang({ meta }))[0].meta.href)= t('Read more')
+        ol
+            each part in themeStack.seriesParts(themeStack.featuredSeries(), pageLang({ meta }))
+                li
+                    a(href=part.meta.href)= part.meta.title

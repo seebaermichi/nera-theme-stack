@@ -1,0 +1,40 @@
+//- The front page (ROADMAP-themes Revision R4, Stack): the hero (title,
+//- lead, a button to `archive_href`, the page body on the right — the
+//- starter's `bash` fence, rendered by plugin-code-blocks as the terminal
+//- card), the tag-cloud seam as a band, the newest post as a wide card, the
+//- next posts as cards, the featured series and the about block.
+extends ../layouts/layout.pug
+
+block main
+    section.home-hero
+        .home-hero__inner
+            div
+                h1.home-hero__title= meta.title || app.name
+                if meta.lead
+                    p.home-hero__lead= meta.lead
+                if meta.archive_href
+                    .home-hero__actions
+                        a.button.button--primary(href=meta.archive_href)= t('All posts')
+            if String(content || '').trim()
+                .home-hero__aside.nera-code-scope
+                    != content
+    include ../partials/tag-cloud.pug
+    if themeStack.homePosts(pageLang({ meta })).length
+        section.post-list
+            h2.post-list__title= t('Latest post')
+            ol.post-list__items
+                each item, position in themeStack.homePosts(pageLang({ meta })).slice(0, 1)
+                    - const featured = true
+                    include ../partials/post-card.pug
+    if themeStack.homePosts(pageLang({ meta })).length > 1
+        section.post-list
+            h2.post-list__title= t('Recent posts')
+            if meta.archive_href
+                a.post-list__more(href=meta.archive_href)= t('All posts')
+            ol.post-list__items
+                each item, index in themeStack.homePosts(pageLang({ meta })).slice(1)
+                    - const position = index + 1
+                    - const featured = false
+                    include ../partials/post-card.pug
+    include ../partials/home-series.pug
+    include ../partials/home-about.pug

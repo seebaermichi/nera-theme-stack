@@ -1,0 +1,20 @@
+//- All posts (§S4.1, Revision R4): header, body, one section per year
+//- (newest first) with the year's count, the tag-cloud seam as a band.
+extends ../layouts/layout.pug
+
+block main
+    include ../partials/page-header.pug
+    if String(content || '').trim()
+        .page__body
+            != content
+    each group in themeStack.postsByYear(pageLang({ meta }))
+        section.post-archive__year
+            h2
+                | #{group.year}
+                span.post-archive__count #{group.posts.length} #{t('posts')}
+            ul.post-archive__list
+                each item in group.posts
+                    li.post-archive__item
+                        time(datetime=isoDate(item.meta.createdAt))= themeStack.dayMonth(item.meta.createdAt, pageLang(item))
+                        a(href=item.meta.href)= item.meta.title
+    include ../partials/tag-cloud.pug

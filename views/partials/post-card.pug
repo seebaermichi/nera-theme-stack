@@ -1,0 +1,21 @@
+//- One post in a list (§S4.1a, Revision R3). In scope: `item` (the post,
+//- { content, meta }), `position` (its place in the list, for the cover
+//- colour) and `featured` (true for the wide card of the newest post). A post
+//- with a frontmatter `image` shows it through the card-media seam; one
+//- without shows its first tag as large type on a coloured cover.
+li.post-list__item
+    article.post-card(class=(typeof featured !== 'undefined' && featured) ? 'post-card--featured' : undefined)
+        if item.meta.image
+            .post-card__media
+                include card-media.pug
+        else
+            .post-card__cover(class=`post-card__cover--${themeStack.cover(item, typeof position === 'number' ? position : 0).tone}` aria-hidden='true')
+                span= themeStack.cover(item, typeof position === 'number' ? position : 0).text
+        .post-card__body
+            h3.post-card__title
+                a.post-card__link(href=item.meta.href)= item.meta.title
+            if item.meta.description
+                p.post-card__excerpt= item.meta.description
+            if isoDate(item.meta.createdAt)
+                p.post-card__meta
+                    time.post-card__date(datetime=isoDate(item.meta.createdAt))= formatDate(item.meta.createdAt, pageLang(item))
