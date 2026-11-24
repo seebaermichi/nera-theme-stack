@@ -17,6 +17,13 @@ const pub = builds.default.public
 const datetimes = (html) => tags(html, 'time').map((a) => attr(a, 'datetime'))
 const isDescending = (list) => list.every((value, i) => i === 0 || list[i - 1] >= value)
 const sections = (html, className) => html.split(`<section class="${className}">`).slice(1).map((s) => s.split('</section>')[0])
+// theme.css without comments; rule() joins the bodies of every rule whose
+// selector list names the selector, rules nested in @media included
+const css = fs.readFileSync(path.join(ROOT, 'assets', 'css', 'theme.css'), 'utf-8').replace(/\/\*[\s\S]*?\*\//g, '')
+const phone = css.slice(css.indexOf('@media (max-width: 900px)'))
+const rule = (text, selector) => [...text.matchAll(/([^{}]+)\{([^{}]*)\}/g)]
+    .filter(([, prelude]) => prelude.split(',').map((x) => x.trim()).includes(selector))
+    .map(([, , body]) => body).join('\n')
 
 describe('Starter fit: home', () => {
     it('shows the hero: title as the one <h1>, lead, a button to archive_href, the body on the right', () => {
@@ -104,13 +111,9 @@ describe('Starter fit: home', () => {
     })
 
     it('keeps the topics band on one line, scrolling sideways when the tags do not fit', () => {
-        const css = fs.readFileSync(path.join(ROOT, 'assets', 'css', 'theme.css'), 'utf-8').replace(/\/\*[\s\S]*?\*\//g, '')
-        const rule = (selector) => [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)]
-            .filter(([, prelude]) => prelude.split(',').map((x) => x.trim()).includes(selector))
-            .map(([, , body]) => body).join('\n')
-        expect(rule('.tag-cloud')).toMatch(/flex-wrap: nowrap/)
-        expect(rule('.tag-cloud')).toMatch(/overflow-x: auto/)
-        expect(rule('.tag-cloud__item')).toMatch(/white-space: nowrap/)
+        expect(rule(css, '.tag-cloud')).toMatch(/flex-wrap: nowrap/)
+        expect(rule(css, '.tag-cloud')).toMatch(/overflow-x: auto/)
+        expect(rule(css, '.tag-cloud__item')).toMatch(/white-space: nowrap/)
         expect(css).not.toMatch(/\.tag-cloud\s*\{[^}]*flex-wrap: wrap/)
     })
 
@@ -174,6 +177,16 @@ describe('Starter fit: post', () => {
             expect(built, file).not.toContain('post__media')
         }
         expect(html).not.toContain('post-facts__note')
+    })
+
+    it('sizes the post picture by one rule: the img at full width, no height on the media or the picture', () => {
+        // the matcher sees the phone block, or a phone-only height rule would slip through
+        expect(rule(phone, '.post-archive__item')).toMatch(/grid-template-columns/)
+        expect(rule(css, '.post__image')).toMatch(/width: 100%/)
+        expect(rule(css, '.post__image')).not.toMatch(/(^|[^-]|min-)height|aspect-ratio|object-fit/)
+        for (const selector of ['.post__media', '.post__media picture', '.post__media > picture', '.post__media img']) {
+            expect(rule(css, selector), selector).not.toMatch(/(^|[^-]|min-)height|aspect-ratio/)
+        }
     })
 
     it('renders no series block or line for a post outside a series, and no facts without facts', () => {
@@ -255,6 +268,21 @@ describe('Starter fit: archive, tag page, default page', () => {
             expect(html).toMatch(/<section class="tag-cloud">/)
         })
     }
+
+    it('renders each archive row as a date and a title only: no picture column, one grid track per child', () => {
+        for (const archive of ['archive.html', 'de/archiv.html']) {
+            const items = page(pub, archive).split('<li class="post-archive__item">').slice(1).map((li) => li.split('</li>')[0])
+            expect(items.length, archive).toBeGreaterThan(0)
+            for (const item of items) {
+                expect(item, archive).toMatch(/^\s*<time datetime="\d{4}-\d{2}-\d{2}">[^<]+<\/time>\s*<a href="[^"]+">[^<]+<\/a>\s*$/)
+            }
+        }
+        // the picture post is in the archive too, still without a picture
+        expect(page(pub, 'archive.html')).toContain('href="/posts/horizon-dashboards.html"')
+        const desktop = /grid-template-columns: ([^;]+);/.exec(rule(css.slice(0, css.indexOf('@media')), '.post-archive__item'))[1]
+        expect(desktop.trim().split(/\s+(?![^(]*\))/)).toHaveLength(2)
+        expect(rule(phone, '.post-archive__item')).toMatch(/grid-template-columns: minmax\(0, 1fr\);/)
+    })
 
     it('renders every generated tag page with exactly one <h1>, through pages/tag.pug', () => {
         const tagPages = pages(pub).filter(({ file }) => /^(de\/)?tags\//.test(file))
