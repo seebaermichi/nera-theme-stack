@@ -163,6 +163,29 @@ Pictures and code inside a post come from the plugins' output, which the theme o
 - `![alt](src "Caption")` → plugin-images' `figure.nera-image` with its caption;
 - a bulleted list → red square bullets.
 
+## External links in a new tab
+
+The theme sets no `target` itself, but it marks every link that opens a new tab with an arrow (`↗`), so the change of context is visible. To open external links in a new tab:
+
+```bash
+npm install @nera-static/plugin-link-attributes
+npx nera-link-attributes     # writes config/link-attributes.yaml
+```
+
+```yaml
+# config/link-attributes.yaml — every link in page content whose href starts with http or www
+attributes:
+    - target="_blank"
+    - rel="noopener noreferrer"
+```
+
+```yaml
+# config/social-media-links.yaml — the footer's social links too
+open_in_new_tab: true
+```
+
+`nera check`'s opt-in rule `a11y-target-blank` reports every `target="_blank"`; a site that opens new tabs on purpose leaves it off (its default) or sets `a11y-target-blank: off` in `config/validate.yaml`. Links of the theme itself (header, footer, legal links) are internal and never open a new tab.
+
 ## Configuration: `config/theme.yaml`
 
 The theme's `config/theme.yaml` holds every key with a default. Your site's `config/theme.yaml` is deep-merged over it: set only what you change. Arrays are replaced as a whole.
@@ -334,17 +357,17 @@ The theme guarantees its own markup. Your content and the plugin output are your
 1. Keep a `theme/views/` folder, and delete the `nera:scaffold-default` starter files from it.
 2. Publish every plugin template you use (`npx nera-<plugin>`) and fill the seams; keep plugin-navigation's default class names and call `+linkListNav` (with `rootPath` for a language folder).
 3. Use `@nera-static/plugin-page-pagination` 2.4.0 or later and translate `Pagination`.
-4. Never include `fontawesome-cdn-link.pug`; set `open_in_new_tab: false` in `config/social-media-links.yaml`.
+4. Never include `fontawesome-cdn-link.pug`. Set `open_in_new_tab` in `config/social-media-links.yaml` deliberately: `false` keeps every link in the same tab; `true` (with plugin-link-attributes for content links, see above) needs `a11y-target-blank` off.
 5. Set `footer_links` to your imprint and privacy pages, per language, with labels the legal checks recognise (`Imprint`/`Impressum`, `Privacy`/`Datenschutz`).
 6. Translate every theme key, `language_name` per language, and your `footer_links` labels.
 7. Start page bodies at `##`, give every image an `alt`, every post a `date`, and the translations of one page the same `slug`.
 8. With plugin-tags: `tag_overview_layout: 'pages/tag.pug'` in `config/tags.yaml` (and `group_by_lang: true` on a multilingual site). With plugin-code-blocks: `extra_css: ['/_nera/code-blocks.css']` and `copy_button: false`. With plugin-images: `widths: [480, 800, 1600, 2400]` and `eager_first: false` in `config/images.yaml`.
 
-`test/site/` in this repository is a complete example: the sample blog "tinker.log" in English and German with every step above applied, checked in CI with every `nera check` rule on. Its one picture is a generated placeholder made for this repository.
+`test/site/` in this repository is a complete example: the sample blog "tinker.log" in English and German with every step above applied, checked in CI with every `nera check` rule on except `a11y-target-blank` (its external links open in a new tab). Its one picture is a generated placeholder made for this repository.
 
 ## Accessibility and privacy
 
-- Skip link first, one `<main id="main">`, one `<h1>`, no skipped heading level, every theme `<nav>` labelled, `<html lang>` always set, a zoomable viewport, no `target="_blank"`. The type covers are decorative (`aria-hidden`): the card's title carries the link.
+- Skip link first, one `<main id="main">`, one `<h1>`, no skipped heading level, every theme `<nav>` labelled, `<html lang>` always set, a zoomable viewport, no `target="_blank"` in theme markup (links that a plugin opens in a new tab are marked with `↗`). The type covers are decorative (`aria-hidden`): the card's title carries the link.
 - `:focus-visible` gets a 3 px outline in the `focus` colour. The card and button shifts on hover run only for visitors without a reduced-motion preference.
 - The eight default colour pairs and the theme's four `night`/`highlight` pairs reach at least 4.5:1.
 - No JavaScript, no cookies or device storage, no request to another host: the fonts come from your site. Narrow screens are handled by CSS alone; below 900 px every grid stacks to one column.

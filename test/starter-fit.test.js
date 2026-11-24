@@ -182,6 +182,29 @@ describe('Starter fit: post', () => {
         expect(plain).not.toContain('post-facts')
     })
 
+    it('opens external links in a new tab (plugin-link-attributes, social links), internal ones not', () => {
+        const body = elementByClass(html, 'div', 'post__body')
+        const links = tags(body, 'a')
+        const external = links.filter((a) => /^https?:/.test(attr(a, 'href')))
+        expect(external.length).toBeGreaterThan(0)
+        for (const a of external) {
+            expect(attr(a, 'target')).toBe('_blank')
+            expect(attr(a, 'rel')).toBe('noopener noreferrer')
+        }
+        for (const a of tags(html, 'a').filter((a) => /^\//.test(attr(a, 'href')))) expect(attr(a, 'target')).toBeUndefined()
+        const footer = elementByClass(html, 'footer', 'site-footer')
+        const social = tags(footer, 'a').filter((a) => /social-media-links__link/.test(a))
+        expect(social.length).toBe(2)
+        for (const a of social) expect(attr(a, 'target')).toBe('_blank')
+        // and nothing opens a new tab without the plugins
+        for (const { file, html: built } of pages(builds.noplugins.public)) expect(built, file).not.toContain('target="_blank"')
+    })
+
+    it('marks every link that opens a new tab with an arrow, in CSS only', () => {
+        const css = fs.readFileSync(path.join(ROOT, 'assets', 'css', 'theme.css'), 'utf-8')
+        expect(css).toMatch(/a\[target='_blank'\]::after\s*\{[^}]*content: '\\00a0\\2197'/)
+    })
+
     it('puts code blocks of plugin-code-blocks inside .nera-code-scope; diff lines carry hljs-addition / -deletion', () => {
         const body = elementByClass(html, 'div', 'post__body')
         expect(html).toContain('<div class="post__body nera-code-scope">')

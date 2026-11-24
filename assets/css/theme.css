@@ -766,6 +766,17 @@ span.lang-switch__link {
     box-shadow: 3px 3px 0 var(--ink);
 }
 
+/* ---------- links that open a new tab ---------- */
+
+/* A site that opens external links in a new tab (plugin-link-attributes in
+   content, plugin-social-media-links' open_in_new_tab) gets them marked with
+   an arrow, so the change of context is announced visually (WCAG 3.2.5). */
+a[target='_blank']::after {
+    content: '\00a0\2197';
+    display: inline-block;
+    text-decoration: none;
+}
+
 /* ---------- footer ---------- */
 
 .site-footer {

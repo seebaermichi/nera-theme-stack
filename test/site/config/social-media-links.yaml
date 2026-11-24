@@ -1,6 +1,7 @@
 aria_label: Elsewhere
-# No target="_blank" (nera check: a11y-target-blank).
-open_in_new_tab: false
+# External links open in a new tab, like the links in page content
+# (config/link-attributes.yaml).
+open_in_new_tab: true
 social_media_links:
     - name: Mastodon
       href: https://mastodon.social/@example

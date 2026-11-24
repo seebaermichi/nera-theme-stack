@@ -17,7 +17,11 @@ describe('Every built page', () => {
                 expect(countTags(html, 'main'), file).toBe(1)
                 expect(html, file).toMatch(/<main class="site-main" id="main">/)
                 expect(html, file).toMatch(/<body><a class="skip-link" href="#main">/)
-                expect(html, file).not.toMatch(/target="_blank"/)
+                // only external links open a new tab, and always with rel="noopener noreferrer"
+                for (const attrs of tags(html, 'a').filter((a) => /target="_blank"/.test(a))) {
+                    expect(attr(attrs, 'href'), file).toMatch(/^https?:\/\//)
+                    expect(attr(attrs, 'rel'), file).toMatch(/noopener/)
+                }
             }
         })
 

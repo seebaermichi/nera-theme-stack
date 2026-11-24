@@ -2,7 +2,11 @@
 
 All notable changes to `@nera-static/theme-stack` are documented in this file. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and the theme follows [semantic versioning](https://semver.org/) over its contract (see the README).
 
-## [1.0.2] - 2026-11-24
+## [1.1.0] - 2026-11-24
+
+### Added
+
+-   Links that open a new tab are marked with an arrow (`↗`, in CSS on `a[target="_blank"]`), so the change of context is visible (WCAG 3.2.5). The theme still sets no `target` itself: a site opens external links in a new tab with `@nera-static/plugin-link-attributes` (links in page content) and `open_in_new_tab: true` in plugin-social-media-links (footer). Such a site turns off `nera check`'s opt-in rule `a11y-target-blank`, which reports every `target="_blank"`; the README shows the setup.
 
 ### Fixed
 

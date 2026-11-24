@@ -22,7 +22,7 @@ describe('Validates clean', () => {
         expect(json(builds.default.check)).toEqual({ ok: true, results: [] })
     })
 
-    it('runs with every rule of nera check on, the opt-in ones included', async () => {
+    it('runs with every rule of nera check on, the opt-in ones included, but a11y-target-blank', async () => {
         const require = createRequire(path.join(ROOT, 'package.json'))
         const validate = path.dirname(require.resolve('@nera-static/validate'))
         const { OUTPUT_RULES } = await import(path.join(validate, 'src', 'output-rules.js'))
@@ -31,7 +31,9 @@ describe('Validates clean', () => {
 
         expect(ids).toEqual(expect.arrayContaining(['a11y-link-lang', 'a11y-target-blank', 'a11y-reduced-motion', 'privacy-storage']))
         expect(Object.keys(config.rules).sort()).toEqual([...ids].sort())
-        for (const id of ids) expect(config.rules[id], id).toBe('error')
+        // The fixture opens external links in a new tab on purpose (ROADMAP-themes
+        // §S11.8), so the one rule that reports every target="_blank" is off.
+        for (const id of ids) expect(config.rules[id], id).toBe(id === 'a11y-target-blank' ? 'off' : 'error')
         expect(config.ignore).toBeUndefined()
     })
 })
