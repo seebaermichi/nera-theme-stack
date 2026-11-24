@@ -52,4 +52,15 @@ describe('Tokens', () => {
         const known = new Set(tokens.map(({ group, name }) => property(group, name)))
         for (const [, prop] of css.matchAll(/var\((--theme-[\w-]+)/g)) expect(known.has(prop), prop).toBe(true)
     })
+
+    it('uses every token: a token read into a local property is also applied somewhere', () => {
+        const css = fs.readFileSync(path.join(ROOT, 'assets', 'css', 'theme.css'), 'utf-8')
+        const locals = [...css.matchAll(/(--[\w-]+):\s*var\((--theme-[\w-]+)/g)]
+        expect(locals.length).toBeGreaterThan(15)
+        for (const [, local, token] of locals) {
+            if (local.startsWith('--nera-code-')) continue
+            const uses = css.split(`var(${local})`).length - 1
+            expect(uses, `${local} (${token})`).toBeGreaterThan(0)
+        }
+    })
 })

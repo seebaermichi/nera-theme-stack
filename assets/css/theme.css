@@ -930,7 +930,7 @@ span.lang-switch__link {
 
 .post__body > * + *,
 .page__body > * + * {
-    margin-top: 26px;
+    margin-top: var(--space);
 }
 
 .post__body h2,

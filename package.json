@@ -1,6 +1,6 @@
 {
     "name": "@nera-static/theme-stack",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Nera blog theme for developers: code-first posts, series and type-only covers — presentation only.",
     "type": "module",
     "license": "MIT",

@@ -2,6 +2,12 @@
 
 All notable changes to `@nera-static/theme-stack` are documented in this file. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and the theme follows [semantic versioning](https://semver.org/) over its contract (see the README).
 
+## [1.0.1] - 2026-11-24
+
+### Fixed
+
+-   The `size.space` token now takes effect: it sets the space between the blocks of a post's or page's running text (paragraphs, headings, lists, code, tables). `theme.css` read the token but used it nowhere, so a site's `size.space` changed nothing. With the default (`1.5rem`) the gap is 24 px instead of the fixed 26 px before.
+
 ## [1.0.0] - 2026-11-24
 
 ### Added
