@@ -2,6 +2,12 @@
 
 All notable changes to `@nera-static/theme-stack` are documented in this file. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and the theme follows [semantic versioning](https://semver.org/) over its contract (see the README).
 
+## [1.0.2] - 2026-11-24
+
+### Fixed
+
+-   The topics band (`.tag-cloud` on the home and the archive) stays on one line. plugin-tags lists every tag of the page's language, so a blog with many tags wrapped the band onto a second row; it now scrolls sideways instead, on every screen width.
+
 ## [1.0.1] - 2026-11-24
 
 ### Fixed

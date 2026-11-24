@@ -103,6 +103,17 @@ describe('Starter fit: home', () => {
         expect(stripTags(cloud)).not.toMatch(/\d/)
     })
 
+    it('keeps the topics band on one line, scrolling sideways when the tags do not fit', () => {
+        const css = fs.readFileSync(path.join(ROOT, 'assets', 'css', 'theme.css'), 'utf-8').replace(/\/\*[\s\S]*?\*\//g, '')
+        const rule = (selector) => [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)]
+            .filter(([, prelude]) => prelude.split(',').map((x) => x.trim()).includes(selector))
+            .map(([, , body]) => body).join('\n')
+        expect(rule('.tag-cloud')).toMatch(/flex-wrap: nowrap/)
+        expect(rule('.tag-cloud')).toMatch(/overflow-x: auto/)
+        expect(rule('.tag-cloud__item')).toMatch(/white-space: nowrap/)
+        expect(css).not.toMatch(/\.tag-cloud\s*\{[^}]*flex-wrap: wrap/)
+    })
+
     it('leaves out the series and about blocks without featured_series and author.name', () => {
         const html = page(builds.overrides.public, 'index.html')
         expect(html).not.toContain('home-series')

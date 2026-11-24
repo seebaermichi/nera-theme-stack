@@ -383,13 +383,18 @@ span.lang-switch__link {
 
 /* ---------- topics band (plugin-tags' tag cloud) ---------- */
 
+/* One line, however many tags the site has: plugin-tags lists every tag
+   of the page's language, so the band scrolls sideways instead of wrapping. */
 .tag-cloud {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 0 40px;
+    overflow-x: auto;
     padding: 6px max(var(--gutter), calc((100% - var(--width)) / 2));
     background: var(--ink);
     color: #ffffff;
+    scrollbar-color: var(--night-muted) var(--ink);
+    scrollbar-width: thin;
 }
 
 .post-archive__year + .tag-cloud,
@@ -399,6 +404,8 @@ span.lang-switch__link {
 
 .tag-cloud__item {
     display: inline-flex;
+    flex: none;
+    white-space: nowrap;
     align-items: center;
     min-height: 52px;
     padding: 14px 0;
