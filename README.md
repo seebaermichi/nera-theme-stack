@@ -34,7 +34,7 @@ Set a page's `layout` to one of these:
 
 | `layout:` | for | renders |
 |---|---|---|
-| `pages/home.pug` | the front page | the hero (`title`, `lead`, a button to `archive_href`, the page's Markdown body on the right), the `tag-cloud` seam as a dark band, the newest post as a wide card ("Latest post"), the next posts as cards ("Recent posts"), the featured series, the about block |
+| `pages/home.pug` | the front page | the hero (`title`, `lead`, a button to `archive_href`, the page's Markdown body on the right), the `tag-cloud` seam as a dark band, the newest post as a wide card ("Latest post"), the next `blog.home_posts` posts as cards ("Recent posts"), the featured series, the about block |
 | `pages/post.pug` | one post | header (series line, title, lead, author line with published and updated date), the `post-media` seam when the post has an `image`, its `facts` beside the text, the body, then the `post-tags` seam, the parts of its series and the `post-pagination` seam |
 | `pages/archive.pug` | all posts | page header, body, the posts grouped by year (newest first, with the number of posts), the `tag-cloud` seam as a band |
 | `pages/tag.pug` | the tag pages of `@nera-static/plugin-tags` | the `tag-overview` seam, which owns the page's `<h1>` |
@@ -220,7 +220,7 @@ extra_css: []
 footer_links: []
 blog:
     post_layouts: ['pages/post.pug']
-    home_posts: 7
+    home_posts: 6
     featured_series: ''
     highlight_tag: ''
 author:
@@ -235,7 +235,7 @@ author:
 | `extra_css` | stylesheets linked after `theme.css`. Only root-absolute paths (`/css/custom.css`) are linked. |
 | `footer_links` | the footer's legal links: `{ label, href }`; `label` goes through `t()`, `href` is a path or a `{ <lang>: path }` map. |
 | `blog.post_layouts` | the layouts that make a page a post |
-| `blog.home_posts` | how many posts the home lists: the first as the wide card, the rest as cards (default 7: one and two rows of three) |
+| `blog.home_posts` | how many posts "Recent posts" lists after the "Latest post" card (default 6: two rows of three). The card is always the newest post and is not counted; `0` shows the card alone. Since 2.0.0: in 1.x the card was counted (default 7). |
 | `blog.featured_series` | a `series` name: the home shows its parts as a numbered list on a dark block, with a "Read more" link to part one. Nothing when no post of the page's language belongs to it. |
 | `blog.highlight_tag` | read by the other Nera blog themes; Stack renders nothing for it |
 | `author.name`, `author.bio`, `author.href` | the about block on the home (the initials of the name in a lime mark, "About the author", the name, the bio, a "Read more" link to `href`) and the author line of a post. `href` is a path or a `{ <lang>: path }` map. Without `name` neither is rendered; a post's own `author` wins on that post. |

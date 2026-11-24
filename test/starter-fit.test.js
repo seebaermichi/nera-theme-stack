@@ -1,5 +1,5 @@
 // §S15 "Starter fit", with the page contents of Revision R4: the home lists
-// the newest `blog.home_posts` posts, the first as post-card--featured; the
+// the newest post as post-card--featured plus the next `blog.home_posts`; the
 // archive groups by year with a count; a tag page has one <h1>; a post shows
 // its tags, its series with the current part marked, its facts and the
 // prev/next of plugin-page-pagination; a post without a picture renders no
@@ -31,7 +31,7 @@ describe('Starter fit: home', () => {
         ['en', 'index.html', ['2026-11-19'], ['2026-11-05', '2026-10-22', '2026-10-08', '2026-09-24', '2026-09-10', '2026-08-27']],
         ['de', 'de/index.html', ['2026-11-19'], ['2026-11-05', '2026-10-22', '2026-10-08', '2026-09-24', '2026-08-27', '2026-08-13']],
     ]) {
-        it(`${lang}: lists the newest seven posts, the first as post-card--featured under "Latest post"`, () => {
+        it(`${lang}: lists the latest post (post-card--featured) plus six under "Recent posts"`, () => {
             const [latest, recent] = sections(page(pub, home), 'post-list')
             expect(datetimes(latest)).toEqual(first)
             expect(latest).toMatch(/<article class="post-card post-card--featured">/)
@@ -118,7 +118,8 @@ describe('Starter fit: home', () => {
         const html = page(builds.overrides.public, 'index.html')
         expect(html).not.toContain('home-series')
         expect(html).not.toContain('home-about')
-        expect(datetimes(html)).toEqual(['2026-11-19', '2026-11-05'])
+        // home_posts: 2 counts the posts after the "Latest post" card
+        expect(datetimes(html)).toEqual(['2026-11-19', '2026-11-05', '2026-10-22'])
     })
 })
 

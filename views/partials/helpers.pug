@@ -80,11 +80,13 @@
                 .sort((a, b) => time(b) - time(a) || byHref(a, b))
         }
 
-        // The posts the home lists: the newest `blog.home_posts` (default 7:
-        // the featured card and two rows of three).
+        // The posts the home lists: the newest post (the "Latest post" card,
+        // never counted) plus the next `blog.home_posts` (default 6: two rows
+        // of three). `home_posts: 0` leaves the card alone; a value that is not
+        // a non-negative integer falls back to 6.
         const homePosts = (lang) => {
             const count = Number(blog.home_posts)
-            return posts(lang).slice(0, Number.isInteger(count) && count >= 0 ? count : 7)
+            return posts(lang).slice(0, 1 + (Number.isInteger(count) && count >= 0 ? count : 6))
         }
 
         // The posts of a language grouped by year, newest year first. A post

@@ -2,6 +2,28 @@
 
 All notable changes to `@nera-static/theme-stack` are documented in this file. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and the theme follows [semantic versioning](https://semver.org/) over its contract (see the README).
 
+## [2.0.0] - 2026-11-24
+
+### Changed
+
+-   **BREAKING**: `blog.home_posts` no longer counts the "Latest post" card. The card is always the newest post; "Recent posts" lists the next `home_posts` posts, and the default drops from `7` to `6`, so a site on the default shows the same seven posts as before. The key now means the same in all Nera blog themes, which do not count their large opening element either. `home_posts: 0` shows the card alone.
+
+### Migration from v1.x
+
+A site that sets `blog.home_posts` subtracts one to keep its home unchanged:
+
+```yaml
+# 1.x: the card plus four
+blog:
+    home_posts: 5
+
+# 2.0: the card plus four
+blog:
+    home_posts: 4
+```
+
+A site on the default changes nothing. `home_posts: 1` in 1.x (the card alone) becomes `0`. `home_posts: 0` in 1.x (no posts on the home) has no 2.0 equivalent: the card is always shown, and a negative value falls back to the default.
+
 ## [1.1.0] - 2026-11-24
 
 ### Added

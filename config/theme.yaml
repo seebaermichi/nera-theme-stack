@@ -28,7 +28,7 @@ extra_css: []
 footer_links: []
 blog:
     post_layouts: ['pages/post.pug']
-    home_posts: 7
+    home_posts: 6
     featured_series: ''
     highlight_tag: ''
 author:

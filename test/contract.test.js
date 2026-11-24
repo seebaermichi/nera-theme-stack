@@ -69,7 +69,7 @@ describe('Contract present', () => {
         expect(config.label).toBe('Stack')
         expect(config.extra_css).toEqual([])
         expect(config.footer_links).toEqual([])
-        expect(config.blog).toEqual({ post_layouts: ['pages/post.pug'], home_posts: 7, featured_series: '', highlight_tag: '' })
+        expect(config.blog).toEqual({ post_layouts: ['pages/post.pug'], home_posts: 6, featured_series: '', highlight_tag: '' })
         expect(config.author).toEqual({ name: '', bio: '', href: '' })
         expect(config.tokens.color).toEqual(TOKEN_DEFAULTS.color)
         expect(config.tokens.size).toEqual(TOKEN_DEFAULTS.size)
