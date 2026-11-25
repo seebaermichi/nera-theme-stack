@@ -2,6 +2,12 @@
 
 All notable changes to `@nera-static/theme-stack` are documented in this file. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and the theme follows [semantic versioning](https://semver.org/) over its contract (see the README).
 
+## [2.1.0] - 2026-11-25
+
+### Added
+
+-   `@nera-static/plugin-search` `^2.3.1` is an optional peer, and `theme.css` styles its classes `search`, `search__input`, `search__results`, `search__item`, `search__link`, `search__description` and `search__highlight`: the input full width of the text column with a visible focus, the results as rows like the archive's, matches in lime (`color.highlight`) behind the text colour. An empty results list (before typing, or without a match) draws nothing. The theme still ships no search page and no JavaScript: the README shows how a site adds its own `pages/search.pug`, loads the plugin's script from the `scripts-extra.pug` seam on that page only, and links it from the menu.
+
 ## [2.0.0] - 2026-11-24
 
 ### Changed

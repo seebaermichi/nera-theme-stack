@@ -5,6 +5,7 @@
 import fs from 'fs'
 import path from 'path'
 import { describe, expect, inject, it } from 'vitest'
+import { ROOT } from './helpers/site.js'
 import { attr, elementByClass, page, tags } from './helpers/html.js'
 
 const builds = inject('builds')
@@ -12,6 +13,13 @@ const PAGES = [
     { file: 'search.html', href: '/search.html', lang: 'en', index: '/search-index.json', menu: 'Search', other: '/de/suche.html' },
     { file: path.join('de', 'suche.html'), href: '/de/suche.html', lang: 'de', index: '/search-index.de.json', menu: 'Suche', other: '/search.html' },
 ]
+// theme.css without comments; rule() joins the bodies of every rule whose
+// selector list names the selector (as in starter-fit.test.js)
+const css = fs.readFileSync(path.join(ROOT, 'assets', 'css', 'theme.css'), 'utf-8').replace(/\/\*[\s\S]*?\*\//g, '')
+const phone = css.slice(css.indexOf('@media (max-width: 900px)'))
+const rule = (text, selector) => [...text.matchAll(/([^{}]+)\{([^{}]*)\}/g)]
+    .filter(([, prelude]) => prelude.split(',').map((x) => x.trim()).includes(selector))
+    .map(([, , body]) => body).join('\n')
 const index = (build, file) => JSON.parse(fs.readFileSync(path.join(build.public, file), 'utf-8'))
 
 describe('The search page', () => {
@@ -66,5 +74,43 @@ describe('The search page', () => {
             expect(attr(tags(html, 'input').find((a) => /search__input/.test(a)), 'data-search-index')).toBe(`/sub${indexUrl}`)
         }
         expect(index(build, 'search-index.de.json').every((item) => item.href.startsWith('/sub/de/'))).toBe(true)
+    })
+})
+
+describe('The search page looks like Stack', () => {
+    it('sets the search block in the measure, left-aligned with the page header, like a page body', () => {
+        expect(rule(css, '.site-main > .search')).toMatch(/padding-inline: var\(--gutter\)/)
+        expect(rule(css, '.site-main > .search')).toMatch(/max-width: calc\(var\(--measure\) \+ 2 \* var\(--gutter\)\)/)
+    })
+
+    it('draws the input full width, from the tokens, with a visible focus', () => {
+        const input = rule(css, '.search__input')
+        expect(input).toMatch(/width: 100%/)
+        expect(input).toMatch(/background: var\(--surface\)/)
+        expect(input).toMatch(/border: 2px solid var\(--ink\)/)
+        expect(input).toMatch(/border-radius: var\(--radius\)/)
+        expect(input).not.toMatch(/outline: (none|0)/)
+        expect(rule(css, '.search__input:focus-visible')).toMatch(/outline: 3px solid var\(--focus\)/)
+    })
+
+    it('renders no box while the results list is empty, before typing and without a match', () => {
+        expect(rule(css, '.search__results:empty')).toMatch(/display: none/)
+        // the list's rules and margin live only on the list, which the :empty
+        // rule hides; the block around it draws nothing of its own
+        expect(rule(css, '.search__results')).toMatch(/border-block: 2px solid var\(--ink\)/)
+        for (const selector of ['.search', '.site-main > .search']) {
+            expect(rule(css, selector), selector).not.toMatch(/border|background|padding-block|margin-block|(^|[^-])(padding|height):/)
+        }
+    })
+
+    it('marks a match with the text colour on the highlight token, also inside the muted description', () => {
+        const highlight = rule(css, '.search__highlight')
+        expect(highlight).toMatch(/background: var\(--highlight\)/)
+        expect(highlight).toMatch(/(^|[^-])color: var\(--text\)/)
+        expect(rule(css, '.search__description')).toMatch(/color: var\(--muted\)/)
+    })
+
+    it('shrinks the result titles below 900 px like the archive rows', () => {
+        expect(rule(phone, '.search__link')).toMatch(/font-size: 20px/)
     })
 })

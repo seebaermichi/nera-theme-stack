@@ -186,6 +186,56 @@ open_in_new_tab: true
 
 `nera check`'s opt-in rule `a11y-target-blank` reports every `target="_blank"`; a site that opens new tabs on purpose leaves it off (its default) or sets `a11y-target-blank: off` in `config/validate.yaml`. Links of the theme itself (header, footer, legal links) are internal and never open a new tab.
 
+## Search
+
+The theme has no search page of its own and ships no JavaScript, but it styles `@nera-static/plugin-search`'s markup: the input full width of the text column, the results as rows like the archive's, matches in lime. The list draws nothing while it is empty, before typing and when nothing matches. Your site adds the page, loads the plugin's script on that page only, and links it from the menu:
+
+```bash
+npm install @nera-static/plugin-search
+npx nera-search     # publishes theme/views/vendor/plugin-search/search.pug and theme/assets/js/search.js
+```
+
+```yaml
+# config/search.yaml
+group_by_lang: true    # one index per language: the German page finds German pages only
+show_title: false      # the page brings its own <h1>
+```
+
+```yaml
+# config/plugin-order.yaml — search last, so the tag pages plugin-tags adds are in the index
+plugin-order:
+    - end:
+          - plugin-search
+```
+
+```pug
+//- theme/views/pages/search.pug — your site's own page type: the theme's page header, then the plugin's input and list
+extends ../layouts/layout.pug
+
+block main
+    include ../partials/page-header.pug
+    include /vendor/plugin-search/search.pug
+```
+
+In the published `theme/views/vendor/plugin-search/search.pug`, delete the last line, `script(src="/js/search.js")`: it would load the script inside `<main>`. Load it from the `scripts-extra.pug` seam instead, on the search page only, so every other page stays without JavaScript:
+
+```pug
+//- theme/views/partials/scripts-extra.pug
+if meta.layout === 'pages/search.pug'
+    script(src='/js/search.js')
+```
+
+```markdown
+---
+layout: pages/search.pug
+slug: search
+title: Search
+lead: Every post, page and topic, by title and text.
+---
+```
+
+Save that as `pages/search.md` (and `pages/de/suche.md` with `lang: de` and German texts), then add `/search.html` (and `/de/suche.html`) to each language's menu in `config/navigation.yaml`. The input's label and placeholder are the plugin's `t()` keys `search_label` and `search_placeholder`; translate them under `translations` in `config/app.yaml`.
+
 ## Configuration: `config/theme.yaml`
 
 The theme's `config/theme.yaml` holds every key with a default. Your site's `config/theme.yaml` is deep-merged over it: set only what you change. Arrays are replaced as a whole.
@@ -348,6 +398,7 @@ The plugin classes the theme styles, all optional peer dependencies:
 | `@nera-static/plugin-code-blocks` | `^1.2.1` | `nera-code`, `nera-code-scope`, `nera-code__bar`, `nera-code__title`, `nera-code__pre`, `hljs-addition`, `hljs-deletion` |
 | `@nera-static/plugin-images` | `^1.0.3` | `nera-image`, `nera-image__caption` |
 | `@nera-static/plugin-navigation` | `^3.1.0` | `nav`, `nav--list`, `nav__item`, `nav__link`, `nav__link--active`, `nav__link--active-path` — only inside `.site-header__nav` |
+| `@nera-static/plugin-search` | `^2.3.1` | `search`, `search__input`, `search__results`, `search__item`, `search__link`, `search__description`, `search__highlight` (not `search__title`: the page brings its own `<h1>`) |
 | `@nera-static/plugin-social-media-links` | `^2.3.0` | `social-media-links` and its elements — only inside `.site-footer` |
 
 ## What your site must do
@@ -361,7 +412,7 @@ The theme guarantees its own markup. Your content and the plugin output are your
 5. Set `footer_links` to your imprint and privacy pages, per language, with labels the legal checks recognise (`Imprint`/`Impressum`, `Privacy`/`Datenschutz`).
 6. Translate every theme key, `language_name` per language, and your `footer_links` labels.
 7. Start page bodies at `##`, give every image an `alt`, every post a `date`, and the translations of one page the same `slug`.
-8. With plugin-tags: `tag_overview_layout: 'pages/tag.pug'` in `config/tags.yaml` (and `group_by_lang: true` on a multilingual site). With plugin-code-blocks: `extra_css: ['/_nera/code-blocks.css']` and `copy_button: false`. With plugin-images: `widths: [480, 800, 1600, 2400]` and `eager_first: false` in `config/images.yaml`.
+8. With plugin-tags: `tag_overview_layout: 'pages/tag.pug'` in `config/tags.yaml` (and `group_by_lang: true` on a multilingual site). With plugin-code-blocks: `extra_css: ['/_nera/code-blocks.css']` and `copy_button: false`. With plugin-images: `widths: [480, 800, 1600, 2400]` and `eager_first: false` in `config/images.yaml`. With plugin-search: `show_title: false` (and `group_by_lang: true`) in `config/search.yaml`, and its script from `scripts-extra.pug` (see [Search](#search)).
 
 `test/site/` in this repository is a complete example: the sample blog "tinker.log" in English and German with every step above applied, checked in CI with every `nera check` rule on except `a11y-target-blank` (its external links open in a new tab). Its one picture is a generated placeholder made for this repository.
 
