@@ -95,14 +95,17 @@ export const VARIANTS = {
             })
         ),
     // Without plugins: no plugin dependency, no vendor copies, no seam
-    // overrides — every seam at the theme's default.
+    // overrides — every seam at the theme's default — and no search page,
+    // whose page type includes plugin-search's template.
     noplugins: (site) => {
         const pkgFile = path.join(site, 'package.json')
         const pkg = JSON.parse(fs.readFileSync(pkgFile, 'utf-8'))
         delete pkg.dependencies
         fs.writeFileSync(pkgFile, `${JSON.stringify(pkg, null, 4)}\n`)
-        fs.rmSync(path.join(site, 'theme', 'views', 'vendor'), { recursive: true, force: true })
-        fs.rmSync(path.join(site, 'theme', 'views', 'partials'), { recursive: true, force: true })
+        for (const dir of [['theme', 'views', 'vendor'], ['theme', 'views', 'partials'], ['theme', 'views', 'pages'], ['theme', 'assets', 'js']]) {
+            fs.rmSync(path.join(site, ...dir), { recursive: true, force: true })
+        }
+        for (const file of [['pages', 'search.md'], ['pages', 'de', 'suche.md']]) fs.rmSync(path.join(site, ...file))
     },
     // Every post on the home, so a card with a picture is in the list.
     allposts: (site) => {
