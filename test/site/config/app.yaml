@@ -37,3 +37,4 @@ translations:
         # plugin keys: plugin-search
         search_label: Suche
         search_placeholder: Suchen …
+        search_no_results: Keine Treffer

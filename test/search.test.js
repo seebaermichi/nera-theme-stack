@@ -1,7 +1,8 @@
 // The fixture's search page (plugin-search as an optional peer): a page type
-// of the site's own, the plugin's script through the scripts-extra.pug seam
-// on that page only, one index per language, a menu item and a language
-// switch between the two pages.
+// of the site's own, the plugin's 2.4.0 template unedited, its script through
+// the scripts-extra.pug seam on that page only (`include_script: false`), one
+// index per language, a menu item and a language switch between the two
+// pages.
 import fs from 'fs'
 import path from 'path'
 import { describe, expect, inject, it } from 'vitest'
@@ -41,6 +42,9 @@ describe('The search page', () => {
             expect(inputs.length).toBe(1)
             expect(attr(inputs[0], 'data-search-index')).toBe(indexUrl)
             expect(attr(inputs[0], 'aria-label')).toBe(lang === 'de' ? 'Suche' : 'Search')
+            // plugin-search 2.4.0: the client shows this text when a query
+            // matches nothing; German through t(), English the fallback
+            expect(attr(inputs[0], 'data-search-empty')).toBe(lang === 'de' ? 'Keine Treffer' : 'No results')
             expect(elementByClass(html, 'ul', 'search__results').trim()).toBe('')
         })
 
@@ -70,7 +74,9 @@ describe('The search page', () => {
         const build = builds.sub
         for (const { file, index: indexUrl } of PAGES) {
             const html = page(build.public, file)
-            expect(attr(tags(html, 'script')[0], 'src')).toBe('/sub/js/search.js')
+            const scripts = tags(html, 'script')
+            expect(scripts.length).toBe(1)
+            expect(attr(scripts[0], 'src')).toBe('/sub/js/search.js')
             expect(attr(tags(html, 'input').find((a) => /search__input/.test(a)), 'data-search-index')).toBe(`/sub${indexUrl}`)
         }
         expect(index(build, 'search-index.de.json').every((item) => item.href.startsWith('/sub/de/'))).toBe(true)

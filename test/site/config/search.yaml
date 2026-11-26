@@ -3,3 +3,6 @@
 group_by_lang: true
 # The search page brings its own <h1> (partials/page-header.pug).
 show_title: false
+# The client loads through the theme's scripts-extra.pug seam, at the end of
+# <body>, not from the template.
+include_script: false
