@@ -258,7 +258,7 @@ export const PLUGIN_CLASSES = {
         range: '^2.4.0',
         // search__title is not styled: the fixture's search page brings its
         // own page header and sets show_title: false.
-        classes: ['search', 'search__input', 'search__results', 'search__item', 'search__link', 'search__description', 'search__highlight'],
+        classes: ['search', 'search__input', 'search__results', 'search__item', 'search__link', 'search__description', 'search__highlight', 'search__empty'],
     },
 }
 

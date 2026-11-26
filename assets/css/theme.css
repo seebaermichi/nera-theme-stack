@@ -1535,6 +1535,19 @@ a[target='_blank']::after {
     color: var(--text);
 }
 
+/* plugin-search's "no results" message, after the (then empty, hidden)
+   list: muted text on the page background, the pair §S13 pins. No display
+   here, so the client's hidden attribute stays in charge; while there are
+   hits it is also empty, and takes no space. */
+.search__empty {
+    margin: 40px 0 0;
+    color: var(--muted);
+}
+
+.search__empty:empty {
+    display: none;
+}
+
 /* ---------- motion: only for those who do not mind it ---------- */
 
 @media (prefers-reduced-motion: no-preference) {

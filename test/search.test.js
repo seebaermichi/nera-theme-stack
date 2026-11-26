@@ -116,6 +116,23 @@ describe('The search page looks like Stack', () => {
         expect(rule(css, '.search__description')).toMatch(/color: var\(--muted\)/)
     })
 
+    it('shows the "no results" message in muted text on the page background, and nothing while it is hidden or empty', () => {
+        const empty = rule(css, '.search__empty')
+        expect(empty).toMatch(/(^|[^-])color: var\(--muted\)/)
+        // no background of its own, so its pair is muted on bg, which
+        // contrast.test.js pins (§S13); no box that would draw while hidden
+        expect(empty).not.toMatch(/background|border|padding/)
+        // the client toggles the hidden attribute: no display on any rule
+        // that names the message, except the :empty one, which hides it
+        const all = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)]
+            .filter(([, prelude]) => /\.search__empty(?![\w-])/.test(prelude))
+        expect(all.length).toBe(2)
+        for (const [, prelude, body] of all) {
+            if (prelude.trim() === '.search__empty:empty') expect(body).toMatch(/display: none/)
+            else expect(body, prelude.trim()).not.toMatch(/display/)
+        }
+    })
+
     it('shrinks the result titles below 900 px like the archive rows', () => {
         expect(rule(phone, '.search__link')).toMatch(/font-size: 20px/)
     })

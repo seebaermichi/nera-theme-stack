@@ -2,6 +2,16 @@
 
 All notable changes to `@nera-static/theme-stack` are documented in this file. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and the theme follows [semantic versioning](https://semver.org/) over its contract (see the README).
 
+## [2.2.0] - 2026-11-26
+
+### Added
+
+-   `theme.css` styles `search__empty`, the "no results" message `@nera-static/plugin-search` 2.4.0's client shows when a query matches nothing: muted text (`color.muted` on `color.bg`, 6.1:1) under the search input, in the text column. It sets no `display`, so the client's `hidden` attribute stays in charge, and takes no space while it is empty. Its text is the plugin's `t()` key `search_no_results`.
+
+### Changed
+
+-   The optional peer `@nera-static/plugin-search` rises from `^2.3.1` to `^2.4.0`, the version that renders the message. The README's "Search" section now sets `include_script: false` in `config/search.yaml` instead of deleting the script line from the published template, and names `search_no_results` among the plugin's `t()` keys.
+
 ## [2.1.0] - 2026-11-25
 
 ### Added
